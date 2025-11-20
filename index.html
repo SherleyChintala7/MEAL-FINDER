@@ -1,38 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Meal Finder</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="./style.css">
-
 </head>
+
 <body>
-    <header>
-    <div class="header">
-   <i class="fa-solid fa-house" ></i>     
-        <h4>MEAL FINDER</h4>
-        <button onclick="menu.hidden^=1">☰</button>
-        <ul id="menu" hidden>
-                    <li>Beef</li>
-                    <li>Chicken</li>
-                    <li>Dessert</li>
-                    <li>Lamb</li>
-                    <li>Miscellaneous</li>
-                    <li>Pasta</li>
-                    <li>Pork</li>
-                    <li>Seafood</li>
-                    <li>Side</li>
-                    <li>Starter</li>
-                    <li>Vegan</li>
-                    <li>Vegetarian</li>
-                    <li>Breakfast</li>
-                    <li>Goat</li>
-                </ul>
-    </div>
+
+    <!-- HEADER -->
+    <header class="navbar">
+        <div class="logo"><i class="fa-solid fa-house"></i> MEAL FINDER</div>
+        <i id="toggleBtn" class="fa-solid fa-bars menu-icon"></i>
     </header>
 
-    <script src="./app.js"></script>
+    <!-- TOGGLE SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+        <i id="closeBtn" class="fa-solid fa-circle-xmark close-icon"></i>
+        <ul id="sideList"></ul>
+    </aside>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="search-wrapper">
+            <input id="searchInput" type="text" placeholder="Search recipes here ...">
+            <button id="searchBtn" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+        <br>
+        <h1>What are your favorite cuisines?</h1>
+        <br><br>
+        <p>PERSONALIZE YOUR EXPERIENCE</p>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="section">
+        <h2>CATEGORIES</h2>
+        <div id="categoryList" class="grid"></div>
+    </section>
+
+    <script src="app.js"></script>
 </body>
+
 </html>
