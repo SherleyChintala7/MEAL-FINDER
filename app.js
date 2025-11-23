@@ -149,12 +149,17 @@ const searchBtn = document.getElementById("searchBtn");
 if (searchBtn) {
     searchBtn.addEventListener("click", async () => {
         const text = document.getElementById("searchInput").value.trim();
-        const box = document.getElementById("categoryList");
+        const box = document.getElementById("searchResults");
+
+        box.innerHTML = ""; // clear older results
+
+        if (text === "") {
+            box.innerHTML = "<p>Please enter a meal name.</p>";
+            return;
+        }
 
         const res = await fetch(SEARCH_API + text);
         const data = await res.json();
-
-        box.innerHTML = "";
 
         if (!data.meals) {
             box.innerHTML = "<p>No meals found.</p>";
