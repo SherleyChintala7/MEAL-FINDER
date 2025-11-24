@@ -109,15 +109,14 @@ body {
 
 /* HERO */
 .hero {
-  height: 360px;
-  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('./assets/img/kitchen.jpeg') center/cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  text-align: center;
+    height: 360px;
+    background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(./assets/img/kitchen.jpeg) center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
 }
-
 .hero-inner {
   width: 100%;
   max-width: 980px;
@@ -547,6 +546,10 @@ body {
   font-size: 14px;
 }
 
+
+
+
+
 /* MEAL DETAILS  */
 .meal-details {
   display: grid;
@@ -742,8 +745,5 @@ meal-right {
   font-style: italic;
   font-size: 13px;
 }
-
-
-
 
 

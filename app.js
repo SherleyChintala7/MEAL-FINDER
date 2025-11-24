@@ -1,12 +1,14 @@
-
+// ===============================
 // API URLs
+// ===============================
 const CATEGORIES_API = "https://www.themealdb.com/api/json/v1/1/categories.php";
 const SEARCH_API = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 const FILTER_API = "https://www.themealdb.com/api/json/v1/1/filter.php?c=";
 const DETAILS_API = "https://www.themealdb.com/api/json/v1/1/lookup.php?i=";
 
-
+// ===============================
 // ELEMENTS
+// ===============================
 const toggleBtn = document.getElementById("toggleBtn");
 const closeBtn = document.getElementById("closeBtn");
 const sidebar = document.getElementById("sidebar");
@@ -17,8 +19,9 @@ const searchInput = document.getElementById("searchInput");
 const sectionHeaderTitle = document.querySelector(".section-header h2");
 const crumbText = document.getElementById("crumbText");
 
-
+// ===============================
 // SIDEBAR
+// ===============================
 if (toggleBtn) {
   toggleBtn.addEventListener("click", () => {
     if (sidebar) sidebar.classList.add("open");
@@ -36,12 +39,14 @@ document.addEventListener("click", (e) => {
   }
 });
 
-
+// ===============================
 // HELPERS
-
+// ===============================
 function slugEquals(a, b) {
   return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
 }
+
+// Generate a meal card for search + category
 function mealCard(meal, categoryName = "") {
   const badge = categoryName
     ? `<div class="badge">${categoryName}</div>`
@@ -49,6 +54,7 @@ function mealCard(meal, categoryName = "") {
     ? `<div class="badge">${meal.strCategory}</div>`
     : "";
 
+  // Choose a thumbnail whether this is a meal or a category object
   const thumb = meal.strMealThumb || meal.strCategoryThumb || "";
   const title = meal.strMeal || meal.strCategory || "";
 
@@ -61,7 +67,9 @@ function mealCard(meal, categoryName = "") {
   `;
 }
 
+// ===============================
 // NAVIGATION HELPERS
+// ===============================
 function openCategory(name) {
   window.location.href = `category.html?c=${encodeURIComponent(name)}`;
 }
@@ -73,8 +81,9 @@ function openMeal(id) {
 }
 window.openMeal = openMeal;
 
+// ===============================
 // LOAD CATEGORIES ON HOMEPAGE
-
+// ===============================
 async function loadCategories() {
   try {
     const res = await fetch(CATEGORIES_API);
@@ -106,7 +115,10 @@ async function loadCategories() {
     console.error("Category load error:", err);
   }
 }
+
+// ===============================
 // SEARCH ON HOMEPAGE
+// ===============================
 if (searchBtn) {
   searchBtn.onclick = () => {
     const q = (searchInput && searchInput.value || "").trim();
@@ -126,7 +138,10 @@ async function doSearch(text) {
     const data = await res.json();
     const meals = data.meals;
 
+    // Change header to "MEALS"
     if (sectionHeaderTitle) sectionHeaderTitle.textContent = "MEALS";
+
+    // Style grid as meal grid
     if (categoryListEl) categoryListEl.classList.add("grid-cards");
     if (!categoryListEl) return;
 
@@ -147,9 +162,9 @@ async function doSearch(text) {
   }
 }
 
-
+// ===============================
 // CATEGORY PAGE
-
+// ===============================
 async function loadMealsByCategory() {
   const titleEl = document.getElementById("catTitle");
   const descEl = document.getElementById("catDesc");
@@ -212,16 +227,16 @@ async function loadMealDetails() {
     if (!data || !data.meals) return;
     const meal = data.meals[0];
 
+    
     if (crumbText) crumbText.textContent = meal.strMeal || "";
     const miniTitle = document.getElementById("miniTitle");
     if (miniTitle) miniTitle.textContent = meal.strMeal || "";
 
-
+  
     const miniLogo = document.getElementById("miniLogo");
     if (miniLogo) miniLogo.onclick = () => (window.location.href = "index.html");
     const topLogo = document.querySelector(".navbar .logo");
     if (topLogo) topLogo.onclick = () => (window.location.href = "index.html");
-
 
     const ingredients = [];
     for (let i = 1; i <= 20; i++) {
@@ -229,6 +244,7 @@ async function loadMealDetails() {
       const measure = meal[`strMeasure${i}`];
       if (ing && ing.trim()) ingredients.push({ key: i, ing: ing.trim(), measure: (measure||'').trim() });
     }
+
 
     const tags = (meal.strTags || "").split(",").map(t => t.trim()).filter(Boolean);
     const sourceUrl = meal.strSource || meal.strYoutube || "";
@@ -288,7 +304,9 @@ async function loadMealDetails() {
   }
 }
 
+// ===============================
 // INITIALIZER
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
   loadCategories();
 
