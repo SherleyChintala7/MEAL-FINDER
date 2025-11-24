@@ -1,24 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meal Details</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
-
 <body>
 
-    <header class="navbar">
-        <div class="logo"><i class="fa-solid fa-house"></i> MEAL FINDER</div>
-    </header>
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-bar">
+        <i class="fa-solid fa-house"></i>
+        <span class="breadcrumb-arrow">➤</span>
+        <span id="mealNameBread"></span>
+    </div>
 
-    <section class="section">
-        <div id="mealDetails"></div>
-    </section>
+    <div class="details-container">
+      <h2 class="section-title">MEAL DETAILS</h2>
+
+      <div class="meal-detail-card">
+
+        <div class="inner-orange-bar">
+          <i class="fa-solid fa-house"></i> MEAL FINDER
+          <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <div class="detail-flex">
+          <div class="meal-left" id="mealImageBox"></div>
+
+          <div class="meal-right">
+            <div id="mealMainInfo"></div>
+
+            <h3 class="section-head-outside">Ingredients</h3>
+            <div class="ingredients-box">
+              <div class="ingredients-grid" id="ingredientsGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-head-outside measure-head">Measure:</div>
+
+        <div class="measure-section-custom">
+          <div class="measure-grid" id="measureSection"></div>
+        </div>
+
+        <div class="instruction-section-custom">
+          <b>Instructions:</b>
+          <div id="instructionSection"></div>
+        </div>
+
+      </div>
+    </div>
 
     <script src="app.js"></script>
-</body>
 
+</body>
 </html>
