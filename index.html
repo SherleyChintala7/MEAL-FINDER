@@ -12,44 +12,39 @@
 <body>
 
     <!-- HEADER -->
-    <header class="navbar home-navbar">
+    <header class="navbar">
         <div class="logo"><i class="fa-solid fa-house"></i> MEAL FINDER</div>
         <i id="toggleBtn" class="fa-solid fa-bars menu-icon"></i>
     </header>
 
-    <!-- SIDEBAR -->
+    <!-- TOGGLE SIDEBAR -->
     <aside id="sidebar" class="sidebar">
         <i id="closeBtn" class="fa-solid fa-circle-xmark close-icon"></i>
         <ul id="sideList"></ul>
     </aside>
 
-    <!-- HERO SECTION -->
-    <section class="hero-area">
-        <div class="hero-center-box">
-
-            <div class="search-wrapper">
-                <input id="searchInput" type="text" placeholder="Search recipes here ...">
-                <button id="searchBtn" class="search-btn">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-
-            <h1 class="hero-title">What are your favorite cuisines?</h1>
-            <p class="hero-sub">PERSONALIZE YOUR EXPERIENCE</p>
-
+    <section class="hero">
+        <div class="search-wrapper">
+            <input id="searchInput" type="text" placeholder="Search recipes here ...">
+            <button id="searchBtn" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
         </div>
+        <br>
+        <h1>What are your favorite cuisines?</h1>
+        <br><br>
+        <p>PERSONALIZE YOUR EXPERIENCE</p>
     </section>
 
-    <!-- MEALS SECTION (search results) -->
-    <section class="meals-section" id="mealsSection" style="display:none;">
-        <h2 class="cat-title">MEALS</h2>
-        <div id="searchResults" class="category-grid"></div>
+    <section class="section">
+        <h2 id="mealsHeading">MEALS</h2>
+        <div id="mealsList" class="grid"></div>
     </section>
 
-    <!-- CATEGORY SECTION -->
-    <section class="home-section">
-        <h2 class="cat-title">CATEGORIES</h2>
-        <div id="categoryList" class="category-grid"></div>
+    <!-- CATEGORIES -->
+    <section class="section">
+        <h2>CATEGORIES</h2>
+        <div id="categoryList" class="grid"></div>
     </section>
 
     <script src="app.js"></script>

@@ -1,115 +1,210 @@
-// ---------------------------------------
-// SIDEBAR TOGGLE
-// ---------------------------------------
-const toggleBtn = document.getElementById("toggleBtn");
-const closeBtn = document.getElementById("closeBtn");
-const sidebar = document.getElementById("sidebar");
-
-if (toggleBtn) toggleBtn.onclick = () => (sidebar.style.right = "0");
-if (closeBtn) closeBtn.onclick = () => (sidebar.style.right = "-300px");
-
-
-// ---------------------------------------
-// API LINKS
-// ---------------------------------------
 const CATEGORIES_API = "https://www.themealdb.com/api/json/v1/1/categories.php";
 const SEARCH_API = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 const FILTER_API = "https://www.themealdb.com/api/json/v1/1/filter.php?c=";
 const DETAILS_API = "https://www.themealdb.com/api/json/v1/1/lookup.php?i=";
 
+// 1. SIDEBAR TOGGLE 
+const toggleBtn = document.getElementById('toggleBtn');
+const closeBtn = document.getElementById('closeBtn');
+const sidebar = document.getElementById('sidebar');
+const sideList = document.getElementById('sideList');
 
-// ---------------------------------------
-// LOAD HOMEPAGE CATEGORIES
-// ---------------------------------------
-function loadCategories() {
-    const box = document.getElementById("categoryList");
-    const sideList = document.getElementById("sideList");
-    if (!box) return;
-    fetch("https://www.themealdb.com/api/json/v1/1/categories.php")
-        .then(r => r.json())
-        .then(data => {
-            data.categories.forEach(cat => {
-                box.innerHTML += `
-                    <div class="card" onclick="openCategory('${cat.strCategory}')">
-                        <img src="${cat.strCategoryThumb}">
-                        <p>${cat.strCategory}</p>
-                    </div>
-                `;
-                if (sideList) {
-                    sideList.innerHTML += `
-                        <li onclick="openCategory('${cat.strCategory}')">${cat.strCategory}</li>
-                    `;
-                }
-            });
-        });
-}
-loadCategories();
-
-// ---------------------------------------
-// OPEN CATEGORY PAGE
-// ---------------------------------------
-function openCategory(name) {
-    window.location.href = `category.html?c=${name}`;
+let sidebarOverlay = document.getElementById('sidebarOverlay');
+if (!sidebarOverlay) {
+    sidebarOverlay = document.createElement('div');
+    sidebarOverlay.id = 'sidebarOverlay';
+    document.body.appendChild(sidebarOverlay);
 }
 
+function openSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.add('open');
+    sidebarOverlay.classList.add('visible');
+    if (closeBtn) closeBtn.classList.remove('black');
+    document.body.style.overflow = 'hidden';
+    if (closeBtn) closeBtn.focus();
+}
 
-// ---------------------------------------
-// LOAD MEALS IN CATEGORY PAGE
-// ---------------------------------------
-function loadMealsByCategory() {
-    const title = document.getElementById("catTitle");
-    const list = document.getElementById("mealList");
+function closeSidebar() {
+    if (!sidebar) return;
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('visible');
+    if (closeBtn) closeBtn.classList.add('black'); 
+    document.body.style.overflow = '';
+    if (toggleBtn) toggleBtn.focus();
+}
 
-    if (!title || !list) return;
+// Toggle open/close with hamburger
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        
+        if (sidebar && sidebar.classList.contains('open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+}
 
-    const searchData = sessionStorage.getItem("searchMeals");
-    if (searchData) {
-        const meals = JSON.parse(searchData);
-        title.innerText = "Results";
+// Close button
+if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+        closeBtn.classList.add('black');
+        closeSidebar();
+    });
+}
 
-        meals.forEach(meal => {
-            list.innerHTML += `
-                <div class="card" onclick="openMeal('${meal.idMeal}')">
-                    <img src="${meal.strMealThumb}">
-                    <p>${meal.strMeal}</p>
-                </div>
-            `;
-        });
+// Clicking overlay closes
+sidebarOverlay.addEventListener('click', closeSidebar);
 
-        sessionStorage.removeItem("searchMeals");
+// ESC closes
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
+});
+
+
+if (sideList) {
+    sideList.addEventListener('click', (e) => {
+        const li = e.target.closest('li');
+        if (!li) return;
+        const category = li.textContent.trim();
+        if (!category) return;
+
+
+        window.location.href = `category.html?c=${encodeURIComponent(category)}`;
+        closeSidebar();
+    });
+}
+
+// --------------------------------------
+// 2. meals rendering
+// --------------------------------------
+const mealsHeading = document.getElementById("mealsHeading");
+const mealsContainer = document.getElementById("mealsList");
+const categoryBox = document.getElementById("categoryList");
+
+function renderMeals(meals) {
+    if (!mealsContainer) return;
+    mealsContainer.innerHTML = "";
+
+    if (!meals || meals.length === 0) {
+        mealsContainer.innerHTML = "<p style='grid-column:1/-1;padding:16px;'>No meals found.</p>";
         return;
     }
 
-    const params = new URLSearchParams(window.location.search);
-    const category = params.get("c");
+    meals.forEach(meal => {
+        mealsContainer.innerHTML += `
+            <div class="card" onclick="window.location.href='meal.html?id=${meal.idMeal}'">
+                <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+                <p class="cat-badge">${meal.strCategory || ''}</p>
+                <div class="title">${meal.strMeal}</div>
+            </div>
+        `;
+    });
 
-    title.innerText = category;
+    if (mealsHeading) mealsHeading.textContent = "MEALS";
+    if (mealsContainer) mealsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-    fetch(FILTER_API + category)
-        .then(r => r.json())
-        .then(data => {
-            data.meals.forEach(meal => {
-                list.innerHTML += `
-                    <div class="card" onclick="openMeal('${meal.idMeal}')">
-                        <img src="${meal.strMealThumb}">
-                        <p>${meal.strMeal}</p>
-                    </div>
-                `;
-            });
+// --------------------------------------
+// 3. LOAD CATEGORIES
+// --------------------------------------
+const loadCategories = async () => {
+    if (!categoryBox) return;
+
+    try {
+        const res = await fetch(CATEGORIES_API);
+        const data = await res.json();
+        const categories = data?.categories || [];
+
+        categoryBox.innerHTML = ""; 
+        if (sideList) sideList.innerHTML = ""; 
+
+        categories.forEach(category => {
+            categoryBox.innerHTML += `
+                <div class="card" onclick="openCategory('${category.strCategory}')">
+                    <img src="${category.strCategoryThumb}" alt="${category.strCategory}">
+                    <p class="cat-badge">${category.strCategory}</p>
+                    <div class="title">${category.strCategory}</div>
+                </div>
+            `;
+
+            if (sideList) {
+                const li = document.createElement('li');
+                li.textContent = category.strCategory;
+                sideList.appendChild(li);
+            }
         });
+    } catch (err) {
+        console.error("Failed loading categories:", err);
+    }
+};
+
+loadCategories();
+
+// --------------------------------------
+// 4. OPEN CATEGORY
+// --------------------------------------
+const openCategory = (name) => {
+    const pathname = window.location.pathname;
+    const onIndex = pathname.endsWith('/') || pathname.endsWith('/index.html') || pathname.endsWith('index.html');
+
+    if (onIndex && mealsContainer && mealsHeading) {
+        fetch(FILTER_API + encodeURIComponent(name))
+            .then(res => res.json())
+            .then(data => renderMeals(data.meals))
+            .catch(err => {
+                console.error("Failed to load category meals:", err);
+                if (mealsContainer) mealsContainer.innerHTML = "<p>Could not load meals. Try again later.</p>";
+            });
+        return;
+    }
+
+    window.location.href = `category.html?c=${encodeURIComponent(name)}`;
+};
+
+// --------------------------------------
+// 5. OPEN MEAL DETAILS
+// --------------------------------------
+const openMeal = (id) => {
+    window.location.href = `meal.html?id=${encodeURIComponent(id)}`;
+};
+
+// --------------------------------------
+// 6. LOAD MEALS BY CATEGORY (category.html)
+// --------------------------------------
+const loadMealsByCategory = async () => {
+    const title = document.getElementById("catTitle");
+    const list = document.getElementById("mealList");
+    if (!title || !list) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const categoryName = params.get("c") || "";
+    title.innerText = categoryName;
+
+    try {
+        const res = await fetch(FILTER_API + encodeURIComponent(categoryName));
+        const data = await res.json();
+        const meals = data?.meals || [];
+        list.innerHTML = "";
+        meals.forEach(meal => {
+            list.innerHTML += `
+                <div class="card" onclick="openMeal('${meal.idMeal}')">
+                    <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+                    <p class="title">${meal.strMeal}</p>
+                </div>
+            `;
+        });
+    } catch (err) {
+        console.error("Failed to load meals by category:", err);
+    }
 }
-loadMealsByCategory();
 
-
-// ---------------------------------------
-// OPEN MEAL DETAILS PAGE
-// ---------------------------------------
-function openMeal(id) {
-    window.location.href = `meal.html?id=${id}`;
+if (window.location.pathname.endsWith('category.html')) {
+    loadMealsByCategory();
 }
 
-
-// ---------------------------------------
+// --------------------------------------
 // LOAD MEAL DETAILS PAGE
 // ---------------------------------------
 function loadMealDetails() {
@@ -191,35 +286,40 @@ function loadMealDetails() {
 }
 loadMealDetails();
 
-const searchResults = document.getElementById("searchResults");
-const mealsSection = document.getElementById("mealsSection");
+// --------------------------------------
+// 8. SEARCH (index)
+// --------------------------------------
+const searchBtn = document.getElementById("searchBtn");
+if (searchBtn) {
+    searchBtn.addEventListener("click", async () => {
+        const text = document.getElementById("searchInput").value.trim();
+        if (!text) return;
 
-if (searchBtn && searchInput) {
-    searchBtn.onclick = () => {
-        const value = searchInput.value.trim();
-        if (value === "") return;
+        try {
+            const res = await fetch(SEARCH_API + encodeURIComponent(text));
+            const data = await res.json();
 
-        fetch(SEARCH_API + value)
-            .then(r => r.json())
-            .then(data => {
-                mealsSection.style.display = "block";
-                searchResults.innerHTML = "";
-
-                if (!data.meals) {
-                    searchResults.innerHTML = "<p>No meals found.</p>";
-                    return;
+            if (!data?.meals || data.meals.length === 0) {
+                if (mealsContainer) {
+                    mealsContainer.innerHTML = `<div class="no-results">NO FOODS FOUND...</div>`;
+                    mealsHeading.textContent = "MEALS";
+                    mealsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+                return;
+            }
 
-                data.meals.forEach(meal => {
-                    searchResults.innerHTML += `
-                        <div class="card" onclick="openMeal('${meal.idMeal}')">
-                            <img src="${meal.strMealThumb}">
-                            <p>${meal.strMeal}</p>
-                        </div>
-                    `;
-                });
+            renderMeals(data.meals);
+        } catch (err) {
+            console.error("Search failed:", err);
+        }
+    });
 
-                mealsSection.scrollIntoView({ behavior: "smooth" });
-            });
-    };
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") searchBtn.click();
+    });
+}
+
+
+function goHome() {
+    window.location.href = "index.html";
 }
