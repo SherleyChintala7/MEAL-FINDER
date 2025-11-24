@@ -24,10 +24,8 @@ const DETAILS_API = "https://www.themealdb.com/api/json/v1/1/lookup.php?i=";
 function loadCategories() {
     const box = document.getElementById("categoryList");
     const sideList = document.getElementById("sideList");
-
     if (!box) return;
-
-    fetch(CATEGORIES_API)
+    fetch("https://www.themealdb.com/api/json/v1/1/categories.php")
         .then(r => r.json())
         .then(data => {
             data.categories.forEach(cat => {
@@ -37,7 +35,6 @@ function loadCategories() {
                         <p>${cat.strCategory}</p>
                     </div>
                 `;
-
                 if (sideList) {
                     sideList.innerHTML += `
                         <li onclick="openCategory('${cat.strCategory}')">${cat.strCategory}</li>
@@ -47,7 +44,6 @@ function loadCategories() {
         });
 }
 loadCategories();
-
 
 // ---------------------------------------
 // OPEN CATEGORY PAGE
